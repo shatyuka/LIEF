@@ -45,15 +45,15 @@ class Relocation;
 class LIEF_API Parser : public LIEF::Parser {
   friend class OAT::Parser;
   public:
-  static constexpr uint32_t NB_MAX_SYMBOLS         = 1000000;
-  static constexpr uint32_t DELTA_NB_SYMBOLS       = 3000;
-  static constexpr uint32_t NB_MAX_BUCKETS         = NB_MAX_SYMBOLS;
-  static constexpr uint32_t NB_MAX_CHAINS          = 1000000;
-  static constexpr uint32_t NB_MAX_SEGMENTS        = 10000;
-  static constexpr uint32_t NB_MAX_RELOCATIONS     = 3000000;
-  static constexpr uint32_t NB_MAX_DYNAMIC_ENTRIES = 1000;
-  static constexpr uint32_t NB_MAX_MASKWORD        = 512;
-  static constexpr uint32_t MAX_SEGMENT_SIZE       = 3_GB;
+  static constexpr uint32_t NB_MAX_SYMBOLS         = UINT32_MAX;
+  static constexpr uint32_t DELTA_NB_SYMBOLS       = UINT32_MAX;
+  static constexpr uint32_t NB_MAX_BUCKETS         = UINT32_MAX;
+  static constexpr uint32_t NB_MAX_CHAINS          = UINT32_MAX;
+  static constexpr uint32_t NB_MAX_SEGMENTS        = UINT32_MAX;
+  static constexpr uint32_t NB_MAX_RELOCATIONS     = UINT32_MAX;
+  static constexpr uint32_t NB_MAX_DYNAMIC_ENTRIES = UINT32_MAX;
+  static constexpr uint32_t NB_MAX_MASKWORD        = UINT32_MAX;
+  static constexpr uint32_t MAX_SEGMENT_SIZE       = UINT32_MAX;
 
   enum ELF_TYPE {
     ELF_UNKNOWN,
