@@ -1,6 +1,7 @@
 from typing import Any, ClassVar, Iterator, Optional, Union
 
 from typing import overload
+import collections.abc
 import io
 import lief # type: ignore
 import lief.MachO # type: ignore
@@ -20,6 +21,7 @@ import lief.MachO.LoadCommand # type: ignore
 import lief.MachO.Relocation # type: ignore
 import lief.MachO.Section # type: ignore
 import lief.MachO.SegmentCommand # type: ignore
+import lief.MachO.Stub # type: ignore
 import lief.MachO.Symbol # type: ignore
 import lief.MachO.TwoLevelHints # type: ignore
 import lief.objc # type: ignore
@@ -343,6 +345,8 @@ class Binary(lief.Binary):
     def support_arm64_ptr_auth(self) -> bool: ...
     @property
     def symbol_command(self) -> lief.MachO.SymbolCommand: ...
+    @property
+    def symbol_stubs(self) -> collections.abc.Sequence[lief.MachO.Stub]: ...
     @property
     def symbols(self) -> lief.MachO.Binary.it_symbols: ...  # type: ignore
     @property
@@ -1259,6 +1263,7 @@ class PPC_RELOCATION:
 
 class ParserConfig:
     fix_from_memory: bool
+    from_dyld_shared_cache: bool
     parse_dyld_bindings: bool
     parse_dyld_exports: bool
     parse_dyld_rebases: bool
@@ -1561,6 +1566,22 @@ class SourceVersion(LoadCommand):
     version: list[int]
     def __init__(self, *args, **kwargs) -> None: ...
 
+class Stub:
+    class target_info_t:
+        arch: lief.MachO.Header.CPU_TYPE
+        subtype: int
+        @overload
+        def __init__(self) -> None: ...
+        @overload
+        def __init__(self, arg0: lief.MachO.Header.CPU_TYPE, arg1: int, /) -> None: ...
+    def __init__(self, target_info: lief.MachO.Stub.target_info_t, address: int, raw_stub: list[int]) -> None: ...
+    @property
+    def address(self) -> int: ...
+    @property
+    def raw(self) -> memoryview: ...
+    @property
+    def target(self) -> Union[int,lief.lief_errors]: ...
+
 class SubClient(LoadCommand):
     client: str
     def __init__(self, *args, **kwargs) -> None: ...
@@ -1573,6 +1594,7 @@ class Symbol(lief.Symbol):
     class CATEGORY:
         EXTERNAL: ClassVar[Symbol.CATEGORY] = ...
         INDIRECT_ABS: ClassVar[Symbol.CATEGORY] = ...
+        INDIRECT_ABS_LOCAL: ClassVar[Symbol.CATEGORY] = ...
         INDIRECT_LOCAL: ClassVar[Symbol.CATEGORY] = ...
         LOCAL: ClassVar[Symbol.CATEGORY] = ...
         NONE: ClassVar[Symbol.CATEGORY] = ...

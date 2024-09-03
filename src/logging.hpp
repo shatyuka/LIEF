@@ -20,6 +20,8 @@
 #include "LIEF/types.hpp"
 #include "LIEF/config.h"
 
+#include "messages.hpp"
+
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/fmt.h>
 
@@ -73,35 +75,35 @@ class Logger {
   template <typename... Args>
   static void trace(const char *fmt, const Args &... args) {
     if constexpr (lief_logging_support && lief_logging_debug) {
-      Logger::instance().sink_->trace(fmt, args...);
+      Logger::instance().sink_->trace(fmt::runtime(fmt), args...);
     }
   }
 
   template <typename... Args>
   static void debug(const char *fmt, const Args &... args) {
     if constexpr (lief_logging_support && lief_logging_debug) {
-      Logger::instance().sink_->debug(fmt, args...);
+      Logger::instance().sink_->debug(fmt::runtime(fmt), args...);
     }
   }
 
   template <typename... Args>
   static void info(const char *fmt, const Args &... args) {
     if constexpr (lief_logging_support) {
-      Logger::instance().sink_->info(fmt, args...);
+      Logger::instance().sink_->info(fmt::runtime(fmt), args...);
     }
   }
 
   template <typename... Args>
   static void err(const char *fmt, const Args &... args) {
     if constexpr (lief_logging_support) {
-      Logger::instance().sink_->error(fmt, args...);
+      Logger::instance().sink_->error(fmt::runtime(fmt), args...);
     }
   }
 
   template <typename... Args>
   static void warn(const char *fmt, const Args &... args) {
     if constexpr (lief_logging_support) {
-      Logger::instance().sink_->warn(fmt, args...);
+      Logger::instance().sink_->warn(fmt::runtime(fmt), args...);
     }
   }
 
@@ -127,7 +129,7 @@ inline void critial(const char *msg) {
 template <typename... Args>
 void critial(const char *fmt, const Args &... args) {
   LIEF::logging::log(LIEF::logging::LEVEL::CRITICAL,
-    fmt::format(fmt, args...)
+    fmt::format(fmt::runtime(fmt), args...)
   );
 }
 
@@ -146,6 +148,11 @@ template <typename... Args>
   terminate();
 }
 
+inline void needs_lief_extended() {
+  if constexpr (!lief_extended) {
+    Logger::warn(NEEDS_EXTENDED_MSG);
+  }
+}
 
 }
 }

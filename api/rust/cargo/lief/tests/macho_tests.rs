@@ -50,6 +50,11 @@ fn explore_macho(_: &str, macho: &lief::macho::Binary) {
         format!("{:?}", binding);
     }
 
+    for stub in macho.symbol_stubs() {
+        format!("{stub:?}");
+        format!("{}", stub.raw().len());
+    }
+
     for command in macho.commands() {
         format!("{command:?}");
         match command {
@@ -152,6 +157,7 @@ fn explore_macho(_: &str, macho: &lief::macho::Binary) {
 
     for sym in macho.symbols() {
         format!("{sym:?}");
+        format!("{}", sym.demangled_name());
     }
 
     if let Some(info) = macho.dyld_info() {

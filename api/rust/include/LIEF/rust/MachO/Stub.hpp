@@ -12,21 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/MachO/UnknownCommand.hpp"
-#include "LIEF/Visitor.hpp"
 
-#include <spdlog/fmt/fmt.h>
+#pragma once
+#include "LIEF/MachO/Stub.hpp"
 
-namespace LIEF::MachO {
+#include "LIEF/rust/Span.hpp"
+#include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/error.hpp"
 
-void UnknownCommand::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+class MachO_Stub : public Mirror<LIEF::MachO::Stub> {
+  public:
+  using lief_t = LIEF::MachO::Stub;
+  using Mirror::Mirror;
 
-std::ostream& UnknownCommand::print(std::ostream& os) const {
-  LoadCommand::print(os);
-  os << fmt::format("Original Command: {}", original_command());
-  return os;
-}
+  auto address() const { return get().address(); };
+  Span raw() const { return make_span(get().raw()); }
 
-}
+  uint64_t target(uint32_t& err) const {
+    return details::make_error<uint64_t>(get().target(), err);
+  }
+
+};
